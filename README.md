@@ -30,7 +30,7 @@ go build
 ### PostgreSQL backend 
 
 The datasource(s) that the oracle offers keys and signatures for are stored in a PostgreSQL database. You'll have to set the environment variable `DLC_DB_CONN_STRING` to a valid
-PostgreSQL server connection string, by typing the following in your shell: `export DLC_DB_CONN_STRING=postgres://postgres:password@localhost/database?sslmode=disable`
+PostgreSQL server connection string, by typing the following in your shell: `export DLC_DB_CONN_STRING=postgres://postgres:password@localhost/database?sslmode=disable`. Note that this is just an example connection string - be sure to update the username, password, hostname and database to match your database server!
 
 Once the connection string is set, you'll need to create a table in the PostgreSQL database you've specified, and  name it `datasources`. The table will need to have, at a minimum, the following fields:
 
