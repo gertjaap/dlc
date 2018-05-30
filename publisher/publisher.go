@@ -30,28 +30,24 @@ func Process() error {
 	timeNow := uint64(time.Now().Unix())
 	for time := lastPublished + 1; time <= timeNow; time++ {
 		for _, ds := range datasources.GetAllDatasources() {
-			if time%ds.Interval() == 0 {
+			if time%ds.Interval == 0 {
 
-				logging.Info.Printf("Publishing data source %d [ts: %d]\n", ds.Id(), time)
+				logging.Info.Printf("Publishing data source %d [ts: %d]\n", ds.Id, time)
 
-				valueToPublish, err := ds.Value()
-				if err != nil {
-					logging.Error.Printf("Could not retrieve value for data source %d: %s", ds.Id(), err.Error())
-					continue
-				}
+				valueToPublish:= ds.Value
 
 				var a [32]byte
 				copy(a[:], crypto.RetrieveKey(crypto.KeyTypeA)[:])
 
-				k, err := store.GetK(ds.Id(), time)
+				k, err := store.GetK(ds.Id, time)
 				if err != nil {
-					logging.Error.Printf("Could not get signing key for data source %d and timestamp %d : %s", ds.Id(), time, err.Error())
+					logging.Error.Printf("Could not get signing key for data source %d and timestamp %d : %s", ds.Id, time, err.Error())
 					continue
 				}
 
-				R, err := store.GetRPoint(ds.Id(), time)
+				R, err := store.GetRPoint(ds.Id, time)
 				if err != nil {
-					logging.Error.Printf("Could not get pubkey for data source %d and timestamp %d : %s", ds.Id(), time, err.Error())
+					logging.Error.Printf("Could not get pubkey for data source %d and timestamp %d : %s", ds.Id, time, err.Error())
 					continue
 				}
 
@@ -62,7 +58,7 @@ func Process() error {
 				}
 
 				if publishedAlready {
-					logging.Info.Printf("Already published for data source %d and timestamp %d", ds.Id(), time)
+					logging.Info.Printf("Already published for data source %d and timestamp %d", ds.Id, time)
 					continue
 				}
 

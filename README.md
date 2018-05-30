@@ -27,6 +27,38 @@ Then you can build the oracle using
 go build
 ```
 
+### PostgreSQL backend 
+
+The datasource(s) that the oracle offers keys and signatures for are stored in a PostgreSQL database. You'll have to set the environment variable `DLC_DB_CONN_STRING` to a valid
+PostgreSQL server connection string, by typing the following in your shell: `export DLC_DB_CONN_STRING=postgres://postgres:password@localhost/database?sslmode=disable`
+
+Once the connection string is set, you'll need to create a table in the PostgreSQL database you've specified, and  name it `datasources`. The table will need to have, at a minimum, the following fields:
+
+```
+                Table "public.datasources"
+   Column    |            Type             |   Modifiers   
+-------------+-----------------------------+---------------
+ id          | integer                     | not null
+ name        | text                        | not null
+ description | text                        | not null
+ value       | integer                     | not null
+ interval    | integer                     | not null
+```
+
+To create the table, connect to your database and enter the following command:
+```
+psql -h localhost -U postgres -d database
+psql (9.6.7)
+Type "help" for help.
+database=# create table datasources ( Id int primary key not null, Name text not null, Description text not null, Value int not null, Interval int not null);
+```
+
+You'll also need to populate the table with at least one test datasource:
+```
+database=# insert into datasources values (1, 'US Dollar', 'Publishes the value of USD denominated in 1/100000000th units of BTC (satoshi) in multitudes of 10', '14200', '300');
+```
+
+
 ### Running the oracle
 
 Simply start the executable. Since the oracle generates a private key it will ask you for a password to protect it, that you have to enter each time you start up the oracle.
