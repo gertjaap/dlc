@@ -23,7 +23,7 @@ func GetAllDatasources() []DataSourceFromSQL {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	rows, err := gad_db.Queryx("SELECT Id, Name, Description, Value, Interval FROM datasources ORDER BY Id ASC")
+	rows, err := gad_db.Queryx("SELECT Id, Name, Description, cast (Value * 1000000000 as bigint), Interval FROM datasources ORDER BY Id ASC")
 	gad_results := []DataSourceFromSQL{}
 	for rows.Next() {
 		var r DataSourceFromSQL
@@ -33,6 +33,7 @@ func GetAllDatasources() []DataSourceFromSQL {
 		}
 		gad_results = append(gad_results, r)
 	}
+	gad_db.Close()
 
 	return gad_results
 }
@@ -45,10 +46,11 @@ func GetDatasource(id uint64) DataSourceFromSQL {
 		log.Fatalln(err)
 	}
 	gd_results := DataSourceFromSQL{}
-	err = gd_db.Get(&gd_results, "SELECT Id, Name, Description, Value, Interval FROM datasources WHERE id=$1", id)
+	err = gd_db.Get(&gd_results, "SELECT Id, Name, Description, cast (Value * 1000000000 as bigint), Interval FROM datasources WHERE id=$1", id)
 	if err != nil {
 		log.Fatalf("Error getting datasource specified by ID: %v", err)
 	}
+	gd_db.Close()
 	return gd_results
 }
 
@@ -60,10 +62,11 @@ func HasDatasource(id uint64) bool {
 		log.Fatalln(err)
 	}
 	hd_results := DataSourceFromSQL{}
-	err = hd_db.Get(&hd_results, "SELECT Id, Name, Description, Value, Interval FROM datasources WHERE id=$1", id)
-	if err != nil {
-		return false
-	} else {
+	err = hd_db.Get(&hd_results, "SELECT count(id) as id FROM datasources WHERE id=$1", id)
+	defer hd_db.Close()
+	if hd_results.Id > 0 {
 		return true
+	} else {
+		return false
 	}
 }
