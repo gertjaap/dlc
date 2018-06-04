@@ -23,12 +23,9 @@ func DataSourceValueHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		response.ValueError = err.Error()
 	}
-	ds, err := datasources.GetDatasource(datasourceId)
+	ds := datasources.GetDatasource(datasourceId)
 
-	response.CurrentValue, err = ds.Value()
-	if err != nil {
-		response.ValueError = err.Error()
-	}
+	response.CurrentValue = ds.Value
 
 	js, err := json.Marshal(response)
 	if err != nil {

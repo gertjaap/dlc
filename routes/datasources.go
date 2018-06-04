@@ -21,17 +21,14 @@ func ListDataSourcesHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := []DataSourceResponse{}
 	for _, src := range ds {
-		value, err := src.Value()
+		value := src.Value
 
 		jsonSrc := DataSourceResponse{
-			Name:         src.Name(),
-			Description:  src.Description(),
-			Id:           src.Id(),
+			Name:         src.Name,
+			Description:  src.Description,
+			Id:           src.Id,
 			CurrentValue: value}
 
-		if err != nil {
-			jsonSrc.ValueError = err.Error()
-		}
 		response = append(response, jsonSrc)
 	}
 
