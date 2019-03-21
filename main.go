@@ -14,14 +14,81 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	"path/filepath"
+	flags "github.com/jessevdk/go-flags"
+	"github.com/gertjaap/dlcoracle/gcfg"
+)
+
+
+type dlcConfig struct { 
+	DataDir      string `long:"DataDir" description:"Connect to bitcoin testnet3."`
+	HttpPort     string `long:"HttpPort" description:"bc2 full node."`
+	// For testing purposes
+	Interval 	 uint64  `long:"Interval" description:"Interval in seconds."`
+	RangeFrom	uint64  `long:"RangeFrom" description:"Start interval of the publishing random variable"`
+	RangeTo		uint64  `long:"RangeTo" description:"End interval of the publishing random variable"`
+}
+
+
+// newConfigParser returns a new command line flags parser.
+func newConfigParser(conf *dlcConfig, options flags.Options) *flags.Parser {
+	parser := flags.NewParser(conf, options)
+	return parser
+}
+
+var (
+	defaultDataDir  = "oracle"
+	defaultHttpPort = "3000"
+	// For testing purposes
+	defaultInterval = uint64(300)
+	defaultRangeFrom = uint64(10)
+	defaultRangeTo = uint64(20)
 )
 
 func main() {
+
 	logging.Init(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+
+	conf := dlcConfig{
+		DataDir:		defaultDataDir,
+		HttpPort:		defaultHttpPort,
+		// For testing purposes
+		Interval:		defaultInterval,
+		RangeFrom:		defaultRangeFrom,
+		RangeTo:		defaultRangeTo,
+	}
+
+	var err error
+
+	preParser := newConfigParser(&conf, flags.HelpFlag)
+	_, err = preParser.ParseArgs(os.Args) // parse the cli
+	if err != nil {
+		logging.Error.Fatal(err)
+	}
+
+	// create home directory
+	_, err = os.Stat(conf.DataDir)
+	if err != nil {
+		logging.Info.Println("dlcoracle home directory does not exist.")
+	}
+	if os.IsNotExist(err) {
+		// first time the guy is running dlcoracle
+		os.Mkdir(conf.DataDir, 0700)
+		logging.Info.Println("dlcoracle home directory have been created")
+
+	}
+
+
+	gcfg.DataDir = conf.DataDir
+	gcfg.Interval = conf.Interval
+	gcfg.RangeFrom = conf.RangeFrom
+	gcfg.RangeTo = conf.RangeTo
+
 
 	logging.Info.Println("MIT-DCI Discreet Log Oracle starting...")
 
-	key, err := crypto.ReadKeyFile("data/privkey.hex")
+	key, err := crypto.ReadKeyFile(filepath.Join(conf.DataDir, "privkey.hex"))
 	if err != nil {
 		logging.Error.Fatal("Could not open or create keyfile:", err)
 		os.Exit(1)
@@ -53,7 +120,7 @@ func main() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	logging.Info.Println("Listening on port 3000")
+	logging.Info.Printf("Listening on port: %s", conf.HttpPort)
 
-	logging.Error.Fatal(http.ListenAndServe(":3000", handlers.CORS(originsOk, headersOk, methodsOk)(logging.WebLoggingMiddleware(r))))
+	logging.Error.Fatal(http.ListenAndServe(":" + conf.HttpPort, handlers.CORS(originsOk, headersOk, methodsOk)(logging.WebLoggingMiddleware(r))))
 }

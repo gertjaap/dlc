@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gertjaap/dlcoracle/logging"
+
+	"github.com/gertjaap/dlcoracle/gcfg"
 )
 
 type UsdBtc struct {
@@ -23,7 +25,7 @@ func (ds *UsdBtc) Description() string {
 }
 
 func (ds *UsdBtc) Interval() uint64 {
-	return 300 // every 5 minutes
+	return gcfg.Interval
 }
 
 type MinApiCryptoCompareBTCResponse struct {

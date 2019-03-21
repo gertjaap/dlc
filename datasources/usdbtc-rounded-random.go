@@ -4,6 +4,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
+	"github.com/gertjaap/dlcoracle/gcfg"
+
 )
 
 type UsdBtcRoundedRandom struct {
@@ -22,11 +24,12 @@ func (ds *UsdBtcRoundedRandom) Description() string {
 }
 
 func (ds *UsdBtcRoundedRandom) Interval() uint64 {
-	return 300 // every 5 minutes
+	return gcfg.Interval
 }
 
 func (ds *UsdBtcRoundedRandom) Value() (uint64, error) {
-	satoshiValue := uint64(math.Floor(float64(random(100, 150))+0.5)) * 100
+	satoshiValue := uint64(math.Floor(float64(random(int(gcfg.RangeFrom), int(gcfg.RangeTo)))))
+	//satoshiValue := uint64(math.Floor(float64(random(100, 150))+0.5)) * 100
 	return satoshiValue, nil
 }
 
