@@ -1,7 +1,7 @@
 package datasources
 
 import (
-	"math"
+	//"math"
 	"math/rand"
 	"time"
 	"github.com/gertjaap/dlcoracle/gcfg"
@@ -28,9 +28,11 @@ func (ds *UsdBtcRoundedRandom) Interval() uint64 {
 }
 
 func (ds *UsdBtcRoundedRandom) Value() (uint64, error) {
-	satoshiValue := uint64(math.Floor(float64(random(int(gcfg.RangeFrom), int(gcfg.RangeTo)))))
+	//satoshiValue := uint64(math.Floor(float64(random(int(gcfg.RangeFrom), int(gcfg.RangeTo)))))
 	//satoshiValue := uint64(math.Floor(float64(random(100, 150))+0.5)) * 100
-	return satoshiValue, nil
+	//return satoshiValue, nil
+	//return uint64(int(gcfg.RangeFrom)), nil
+	return gcfg.RangeFrom, nil
 }
 
 func random(min, max int) int {
