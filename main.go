@@ -26,8 +26,7 @@ type dlcConfig struct {
 	HttpPort     string `long:"HttpPort" description:"bc2 full node."`
 	// For testing purposes
 	Interval 	 uint64  `long:"Interval" description:"Interval in seconds."`
-	RangeFrom	uint64  `long:"RangeFrom" description:"Start interval of the publishing random variable"`
-	RangeTo		uint64  `long:"RangeTo" description:"End interval of the publishing random variable"`
+	ValueToPublish	uint64  `long:"ValueToPublish" description:"Value to publish"`
 }
 
 
@@ -42,8 +41,7 @@ var (
 	defaultHttpPort = "3000"
 	// For testing purposes
 	defaultInterval = uint64(300)
-	defaultRangeFrom = uint64(10)
-	defaultRangeTo = uint64(20)
+	defaultValueToPublish = uint64(11)
 )
 
 func main() {
@@ -55,8 +53,7 @@ func main() {
 		HttpPort:		defaultHttpPort,
 		// For testing purposes
 		Interval:		defaultInterval,
-		RangeFrom:		defaultRangeFrom,
-		RangeTo:		defaultRangeTo,
+		ValueToPublish:		defaultValueToPublish,
 	}
 
 	var err error
@@ -82,8 +79,7 @@ func main() {
 
 	gcfg.DataDir = conf.DataDir
 	gcfg.Interval = conf.Interval
-	gcfg.RangeFrom = conf.RangeFrom
-	gcfg.RangeTo = conf.RangeTo
+	gcfg.ValueToPublish = conf.ValueToPublish
 
 
 	logging.Info.Println("MIT-DCI Discreet Log Oracle starting...")
