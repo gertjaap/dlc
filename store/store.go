@@ -6,16 +6,19 @@ import (
 	"encoding/binary"
 	"fmt"
 	"time"
+	"path/filepath"
+
 
 	"github.com/adiabat/btcd/btcec"
 	"github.com/boltdb/bolt"
 	"github.com/gertjaap/dlcoracle/logging"
+	"github.com/gertjaap/dlcoracle/gcfg"
 )
 
 var db *bolt.DB
 
 func Init() error {
-	database, err := bolt.Open("data/oracle.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+	database, err := bolt.Open(filepath.Join(gcfg.DataDir, "oracle.db"), 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		logging.Error.Fatal(err)
 		return err

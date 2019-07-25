@@ -31,7 +31,8 @@ func LoadKeyFromFileInteractive(filename string) (*[96]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if a.Size() < 193 { // there can't be a password...
+
+	if a.Size() < 194 { // there can't be a password...
 		return LoadKeyFromFileArg(filename, nil)
 	}
 	fmt.Printf("passphrase: ")
@@ -57,7 +58,7 @@ func LoadKeyFromFileArg(filename string, pass []byte) (*[96]byte, error) {
 		return priv96, err
 	}
 
-	if len(enckey) == 96 { // UNencrypted key, length 32
+	if len(enckey) == 96 { // UNencrypted key, length 96
 		fmt.Printf("WARNING!! Key file not encrypted!!\n")
 		fmt.Printf("Anyone who can read the key file can take everything!\n")
 		fmt.Printf("You should start over and use a good passphrase!\n")

@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gertjaap/dlcoracle/logging"
+
+	"github.com/gertjaap/dlcoracle/gcfg"
 )
 
 type EurBtcRounded struct {
@@ -24,7 +26,7 @@ func (ds *EurBtcRounded) Description() string {
 }
 
 func (ds *EurBtcRounded) Interval() uint64 {
-	return 300 // every 5 minutes
+	return gcfg.Interval
 }
 
 func (ds *EurBtcRounded) Value() (uint64, error) {
